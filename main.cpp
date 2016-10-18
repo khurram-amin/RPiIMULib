@@ -39,8 +39,7 @@ int main()
 		{
 			std::cout<< i << ": " << 1.0f*accel_data[i] << std::endl;
 		}
-		std::cout<<std::endl;
-
+		
 		mpu9250.readGyroRawData(gyro_data);
 
 		for(int i=0; i<3; i++)
