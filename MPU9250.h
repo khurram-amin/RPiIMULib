@@ -45,7 +45,7 @@
 #include <unistd.h>
 
 
-#define DEBUG_MODE 1 //AKA Show me everything
+#define DEBUG_MODE 0 //AKA Show me everything
 
 ////////////////////////////////////////////////
 // Set initial input parameters
