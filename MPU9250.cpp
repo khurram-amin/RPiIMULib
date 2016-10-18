@@ -37,7 +37,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 	{
 		phy2FID = fid_AcceleroGyro;
 
-		#ifdef DEBUG_MODE
+		#if DEBUG_MODE
 			std::cout << "Physical Address to File ID translation for MPU9250. " << MPU9250_ADDRESS  << " converted into " << fid_AcceleroGyro << "."<< std::endl;
 		#endif
 
@@ -47,7 +47,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 	{
 		phy2FID = fid_Magneto;
 
-		#ifdef DEBUG_MODE
+		#if DEBUG_MODE
 			std::cout << "Physical Address to File ID translation for AK8963. " << AK8963_ADDRESS  << " converted into " << fid_Magneto << "." << std::endl;
 		#endif
 
@@ -65,7 +65,7 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	int phy2FID = phyAdd2FID(devAddress);
 	// Read Byte from register
 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
-	#ifdef DEBUG_MODE
+	#if DEBUG_MODE
 		std::cout << "I just read " << std::hex << (int*)bucket2PutDataInto  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
 	#endif
 }
@@ -80,7 +80,7 @@ void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBy
 		//bucket2PutDataInto[i] = 0;
 		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
 	}
-	#ifdef DEBUG_MODE
+	#if DEBUG_MODE
 		std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
 		std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
 		std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
@@ -96,7 +96,7 @@ void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2W
 
 	int write_done = wiringPiI2CWriteReg8(phy2FID, (int)regAddress, (int)byte2Write);
 
-	#ifdef DEBUG_MODE
+	#if DEBUG_MODE
 		std::cout << "I just wrote " << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
 	#endif
 }
@@ -340,7 +340,7 @@ void MPU9250::delayMS(unsigned long ms)
   unsigned long end = micros();
 
 
-  #ifdef DEBUG_MODE
+  #if DEBUG_MODE
   	float dleayTime = (end - start)/1000;
     std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
   #endif
