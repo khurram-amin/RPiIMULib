@@ -102,7 +102,9 @@ void MPU9250::readBytes(uint8_t devAddress, uint8_t regAddress, uint8_t noOfByte
 	char data;
 	for (char i = 0; i < noOfBytes2Read; i++)
 	{
-		bucket2PutDataInto[i] = readByte(devAddress, regAddress+i);
+		data = readByte(devAddress, regAddress+i);
+		bucket2PutDataInto[i] = data;
+		std::cout << data << std::endl;
 	}
 }
 
