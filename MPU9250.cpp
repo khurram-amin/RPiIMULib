@@ -301,9 +301,9 @@ void MPU9250::initMagneto(void)
 	// Configure the magnetometer for continuous read and highest resolution
 	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
 	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
-	uint8_t Mscale = 1;
-	uint8_t Mmode = 0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
-	setState = (Mscale << 4) | Mmode;
+	uint8_t Mscale = (uint8_t)1;
+	uint8_t Mmode = (uint8_t)0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
+	setState = (uint8_t)((Mscale << 4) | Mmode);
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); // Set magnetometer data resolution and sample ODR
 	delayMS(10);
 }

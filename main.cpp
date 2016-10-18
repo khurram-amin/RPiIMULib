@@ -27,9 +27,9 @@ int main()
 	std::cout<<"done!"<<std::endl;
 	std::cout<<std::endl;
 
-	std::cout<<"config AK8963 ";
-	mpu9250.initMagneto();
-	std::cout<<"done!"<<std::endl;
+	// std::cout<<"config AK8963 ";
+	// mpu9250.initMagneto();
+	// std::cout<<"done!"<<std::endl;
 	
 	while(1)
 	{
@@ -50,7 +50,7 @@ int main()
 
 		mpu9250.readTempRawData(temp_data);
 
-		std::cout<< "T" << ": " << temp_data << std::endl;
+		std::cout<< "T" << ": " << *temp_data << std::endl;
 		
 		mpu9250.readMagnetoRawData(magneto_data);
 
