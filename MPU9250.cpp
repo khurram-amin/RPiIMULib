@@ -95,7 +95,7 @@ void MPU9250::writeByte(uint8_t devAddress, uint8_t regAddress, uint8_t bucket2P
 void MPU9250::initAcceleroGyro()
 {
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Wake the device up. Clear sleep mode bit (6), enable all sensors 
-	delayMS(100); //Delay 10 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
+	delayMS(10); //Delay 10 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01); // get stable time source. Set Clock source to be PLL
 	
 	// Configure Gyro and Accelerometer	
@@ -148,9 +148,9 @@ void MPU9250::initMagneto(void)
 	}
 
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00);  // Power down magnetometer
-	delayMS(100);
+	delayMS(10);
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x0F);  // Enter Fuse ROM access mode
-	delayMS(100);
+	delayMS(10);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
 	//destination[0] = (float)(rawData[0] - 128) / 256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
@@ -158,12 +158,12 @@ void MPU9250::initMagneto(void)
 	//destination[2] = (float)(rawData[2] - 128) / 256.0f + 1.0f;
 	
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-	delayMS(100);
+	delayMS(10);
 	// Configure the magnetometer for continuous read and highest resolution
 	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
 	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
-	delayMS(100);
+	delayMS(10);
 }
 
 
@@ -245,9 +245,8 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 // This function will reset Accelerometer + Gyroscope to their default state
 void MPU9250::resetAcceleroGyro(void)
 {
-	uint8_t setState = (uint8_t)0x80;
-	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
-	delayMS(100);
+	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x80);
+	delayMS(10);
 }
 
 
