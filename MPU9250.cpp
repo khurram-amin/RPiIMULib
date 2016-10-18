@@ -288,12 +288,12 @@ void MPU9250::initMagneto(void)
 	//setState = (uint8_t)0x00; // Power down magnetometer  
 	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
 	
-	wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x00);
+	std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x00) << std::endl;
 	delayMS(50);
 
 	//setState = (uint8_t) 0x0F; // Enter Fuse ROM access mode
 	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); 
-	wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x0F);
+	std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x0F) << std::endl;
 	delayMS(50);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, noOfBytes2Read, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
