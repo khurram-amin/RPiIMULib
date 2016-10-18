@@ -244,9 +244,10 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 
 	uint8_t ST2_reg = 0;
 	readByte(AK8963_ADDRESS, AK8963_ST1, &ST2_reg); 
-	std::cout << "here" <<std::endl;
+
 	if ( ST2_reg & 0x01 )
 	{
+		std::cout << "here" <<std::endl;
 		readBytes(AK8963_ADDRESS, AK8963_XOUT_L, noOfBytes2Read, &rawData[0]);
 
 		if (!(rawData[6] & 0x08))
