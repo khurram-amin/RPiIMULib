@@ -66,7 +66,7 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	// Read Byte from register
 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
 	#ifdef DEBUG_MODE
-		std::cout << "I just read " << bucket2PutDataInto  << " from register " << regAddress << " of device " << phy2FID << "."<< std::endl;
+		std::cout << "I just read " << std::hex << (int*)bucket2PutDataInto  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
 	#endif
 }
 
@@ -81,7 +81,7 @@ void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBy
 		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
 	}
 	#ifdef DEBUG_MODE
-		std::cout << "I just read " << noOfBytes2Read  << " bytes from " << regAddress << " of device " << devAddress << "." << std::endl;
+		std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
 		std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
 		std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
 	#endif

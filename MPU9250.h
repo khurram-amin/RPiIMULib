@@ -43,7 +43,7 @@
 #include <sys/time.h>
 
 
-#define DEBUG_MODE 0 //AKA Show me everything
+//#define DEBUG_MODE 0 //AKA Show me everything
 
 // Class For MPU9250 related thingies.
 class MPU9250
