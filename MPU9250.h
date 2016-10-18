@@ -34,6 +34,7 @@
 
 // For I2C communication in RPi
 #include "wiringPiI2C.h"
+#include "wiringPi.h"
 
 // To throw exceptions
 #include <exception>
@@ -121,9 +122,9 @@ public:
 	bool selfTestAccelero(void);
 	bool selfTestGyro(void);
 
-	unsigned long micros(); //Done
-	unsigned long millis(); // Done
-	void delayMS(unsigned long ms); //Done
+	//unsigned long micros(); //Done
+	//unsigned long millis(); // Done
+	//void delayMS(unsigned long ms); //Done
 
 };
 

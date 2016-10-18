@@ -95,7 +95,7 @@ void MPU9250::writeByte(uint8_t devAddress, uint8_t regAddress, uint8_t bucket2P
 void MPU9250::initAcceleroGyro()
 {
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Wake the device up. Clear sleep mode bit (6), enable all sensors 
-	delayMS(10); //Delay 10 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
+	delay(10); //Delay 10 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01); // get stable time source. Set Clock source to be PLL
 	
 	// Configure Gyro and Accelerometer	
@@ -148,9 +148,9 @@ void MPU9250::initMagneto(void)
 	}
 
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00);  // Power down magnetometer
-	delayMS(10);
+	delay(10);
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x0F);  // Enter Fuse ROM access mode
-	delayMS(10);
+	delay(10);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
 	//destination[0] = (float)(rawData[0] - 128) / 256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
@@ -158,12 +158,12 @@ void MPU9250::initMagneto(void)
 	//destination[2] = (float)(rawData[2] - 128) / 256.0f + 1.0f;
 	
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-	delayMS(10);
+	delay(10);
 	// Configure the magnetometer for continuous read and highest resolution
 	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
 	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
-	delayMS(10);
+	delay(10);
 }
 
 
@@ -246,43 +246,43 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 void MPU9250::resetAcceleroGyro(void)
 {
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x80);
-	delayMS(10);
+	delay(10);
 }
 
 
 // This function will get current time in micro seconds.
-unsigned long MPU9250::micros()
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
-	return time_in_micros;
-}
+// unsigned long MPU9250::micros()
+// {
+// 	struct timeval tv;
+// 	gettimeofday(&tv,NULL);
+// 	unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+// 	return time_in_micros;
+// }
 
 
 // This function will get current time in milli senconds.
-unsigned long MPU9250::millis()
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	unsigned long time_in_millis = 1000 * tv.tv_sec + tv.tv_usec/1000;
-	return time_in_millis;
-}
+// unsigned long MPU9250::millis()
+// {
+// 	struct timeval tv;
+// 	gettimeofday(&tv,NULL);
+// 	unsigned long time_in_millis = 1000 * tv.tv_sec + tv.tv_usec/1000;
+// 	return time_in_millis;
+// }
 
 
 // This function will generate a delay in milli seconds.
-void MPU9250::delayMS(unsigned long ms)
-{
-	unsigned long start = micros();
-  usleep(ms*1000); // Sleep
-  unsigned long end = micros();
+// void MPU9250::delayMS(unsigned long ms)
+// {
+// 	unsigned long start = micros();
+//   usleep(ms*1000); // Sleep
+//   unsigned long end = micros();
 
 
-  #if DEBUG_MODE
-  float dleayTime = (end - start)/1000;
-  std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
-  #endif
-}
+//   #if DEBUG_MODE
+//   float dleayTime = (end - start)/1000;
+//   std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
+//   #endif
+// }
 
 
 

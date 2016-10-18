@@ -27,7 +27,7 @@ int main()
 	std::cout<<"done!"<<std::endl;
 	std::cout<<std::endl;
 
-	mpu9250.delayMS(100);
+	//mpu9250.delayMS(100);
 
 	std::cout<<"config AK8963 ";
 	mpu9250.initMagneto();
@@ -67,6 +67,6 @@ int main()
 		std::cout<<std::endl;
 		std::cout<<std::endl;
 
-		mpu9250.delayMS(1);
+		delay(1);
 	}
 }
