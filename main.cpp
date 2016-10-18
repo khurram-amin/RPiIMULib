@@ -25,6 +25,17 @@ int main()
 		}
 		std::cout<<std::endl;
 
+		mpu9250.readGyroRawData(data);
+
+		for(int i=0; i<3; i++)
+		{
+			std::cout<< i << ": " << 1.0f*data[i] << std::endl;
+		}
+		std::cout<<std::endl;
+		std::cout<<std::endl;
+		std::cout<<std::endl;
+		std::cout<<std::endl;
+
 		mpu9250.delayMS(10);
 	}
 }
