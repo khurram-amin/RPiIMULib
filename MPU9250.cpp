@@ -232,7 +232,7 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 		readBytes(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
 		uint8_t c = rawData[6]; // End data read by reading ST2 register
 
-		//if (!(c & 0x08)) // Check if magnetic sensor overflow set, if not then report data
+		if (!(c & 0x08)) // Check if magnetic sensor overflow set, if not then report data
 		{ 
 			std::cout << "HERE3" << std::endl;
 			bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
