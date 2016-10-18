@@ -6,8 +6,8 @@
 //					2. Open AK8963 as Linux File for communication
 MPU9250::MPU9250()
 {
-	fid_AcceleroGyro = wiringPiI2CSetup(MPU9250_ADDRESS);
 	fid_Magneto = wiringPiI2CSetup(AK8963_ADDRESS);
+	fid_AcceleroGyro = wiringPiI2CSetup(MPU9250_ADDRESS);
 
 	#if DEBUG_MODE
 	// Show what are you going to do, as you do it
