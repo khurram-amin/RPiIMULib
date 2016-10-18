@@ -254,7 +254,7 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 {
 	// Define and initilize an array to store register values.
 	uint8_t noOfBytes2Read = 7;
-	uint8_t* rawData = new uint8_t[noOfBytes2Read];
+	uint8_t rawData[7];// = new uint8_t[noOfBytes2Read];
 	for (uint8_t i = 0; i < noOfBytes2Read; i++)
 	{
 		rawData[i] = 0;
