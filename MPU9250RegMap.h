@@ -420,17 +420,17 @@ In this mode, the device will power off all devices except for the primary I2C i
 
 // These register addresses are not in the specifications
 
-#define SELF_TEST_A      0x10
-#define MOT_DUR          0x20  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
-#define ZMOT_THR         0x21  // Zero-motion detection threshold bits [7:0]
-#define ZRMOT_DUR        0x22  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
-#define DMP_INT_STATUS   0x39  // Check DMP interrupt
-#define MOT_DETECT_STATUS 0x61
-#define DMP_BANK         0x6D  // Activates a specific bank in the DMP
-#define DMP_RW_PNT       0x6E  // Set read/write pointer to a specific start address in specified DMP bank
-#define DMP_REG          0x6F  // Register in DMP from which to read or to which to write
-#define DMP_REG_1        0x70
-#define DMP_REG_2        0x71 
+// #define SELF_TEST_A      0x10
+// #define MOT_DUR          0x20  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
+// #define ZMOT_THR         0x21  // Zero-motion detection threshold bits [7:0]
+// #define ZRMOT_DUR        0x22  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
+// #define DMP_INT_STATUS   0x39  // Check DMP interrupt
+// #define MOT_DETECT_STATUS 0x61
+// #define DMP_BANK         0x6D  // Activates a specific bank in the DMP
+// #define DMP_RW_PNT       0x6E  // Set read/write pointer to a specific start address in specified DMP bank
+// #define DMP_REG          0x6F  // Register in DMP from which to read or to which to write
+// #define DMP_REG_1        0x70
+// #define DMP_REG_2        0x71 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

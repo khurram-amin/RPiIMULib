@@ -29,9 +29,9 @@ int main()
 
 	//mpu9250.delayMS(100);
 
-	std::cout<<"config AK8963 ";
-	mpu9250.initMagneto();
-	std::cout<<"done!"<<std::endl;
+	// std::cout<<"config AK8963 ";
+	// mpu9250.initMagneto();
+	// std::cout<<"done!"<<std::endl;
 
 
 	
