@@ -30,7 +30,7 @@ MPU9250::MPU9250()
 
 
 // Converts Physical Address of I2C device into FileID for wiringPI
-int MPU9250::phyAdd2FID(uint16_t phyAdd)
+int MPU9250::phyAdd2FID(uint8_t phyAdd)
 {
 	int phy2FID;
 	if (phyAdd == (int)MPU9250_ADDRESS)
@@ -59,17 +59,17 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 
 
 // This function will read one byte from the the addressed device's (in devAddress) register (mentioned in regAddress) over I2C and put it into bucket2PutDataInto
-void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto)
-{
-	// Convert Physical Address of Device into FileID
-	int phy2FID = phyAdd2FID(devAddress);
-	// Read Byte from register
-	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
-	#if DEBUG_MODE
-	int byteValue = *bucket2PutDataInto;
-	std::cout << "I just read " << std::hex << (int)byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
-	#endif
-}
+// void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto)
+// {
+// 	// Convert Physical Address of Device into FileID
+// 	int phy2FID = phyAdd2FID(devAddress);
+// 	// Read Byte from register
+// 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
+// 	#if DEBUG_MODE
+// 	int byteValue = *bucket2PutDataInto;
+// 	std::cout << "I just read " << std::hex << (int)byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
+// 	#endif
+// }
 
 
 // This function will read multiple bytes of data starting from regAddress + [0 to noOfBytes2Read] and put it into bucket2PutDataInto.
@@ -108,18 +108,24 @@ void MPU9250::readBytes(uint8_t devAddress, uint8_t regAddress, uint8_t noOfByte
 	}
 }
 
-// Write One-byte of data at regAddress of device devAddress.
-void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write)
+void MPU9250::writeByte(uint8_t devAddress, uint8_t regAddress, uint8_t bucket2PutDataInto)
 {
-	/// Convert Physical Address of Device into FileID
 	int phy2FID = phyAdd2FID(devAddress);
-
-	int write_done = wiringPiI2CWriteReg8(phy2FID, (int)regAddress, (int)byte2Write);
-
-	#if DEBUG_MODE
-	std::cout << "I just wrote " << std::hex << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
-	#endif
+	wiringPiI2CWriteReg8(phy2FID, regAddress, bucket2PutDataInto);
 }
+
+// Write One-byte of data at regAddress of device devAddress.
+// void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write)
+// {
+// 	/// Convert Physical Address of Device into FileID
+// 	int phy2FID = phyAdd2FID(devAddress);
+
+// 	int write_done = wiringPiI2CWriteReg8(phy2FID, (int)regAddress, (int)byte2Write);
+
+// 	#if DEBUG_MODE
+// 	std::cout << "I just wrote " << std::hex << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
+// 	#endif
+// }
 
 // Initilize MPU9250 device
 void MPU9250::initAcceleroGyro()
@@ -145,22 +151,23 @@ void MPU9250::initAcceleroGyro()
 
 	// Set gyroscope full scale range
 	// Range selects FS_SEL and AFS_SEL are 0 - 3, so 2-bit values are left-shifted into positions 4:3
-	uint8_t gyro_old_config;
-	readByte (MPU9250_ADDRESS, GYRO_CONFIG, &gyro_old_config);
+	//uint8_t gyro_old_config;
+	//readByte (MPU9250_ADDRESS, GYRO_CONFIG, &gyro_old_config);
+	char gyro_old_config = readByte (MPU9250_ADDRESS, GYRO_CONFIG);
 	
-	setState = (uint8_t)(gyro_old_config & ~0xE0); // Clear self-test bits [7:5] 
+	setState = (gyro_old_config & ~0xE0); // Clear self-test bits [7:5] 
 	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
 
-	setState = (uint8_t)(gyro_old_config & ~0x18); // Clear AFS bits [4:3]
+	setState = (gyro_old_config & ~0x18); // Clear AFS bits [4:3]
 	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
 
-	setState = (uint8_t)(gyro_old_config | Gscale << 3); // Set full scale range for the gyro
+	setState = (gyro_old_config | Gscale << 3); // Set full scale range for the gyro
 	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
 
 
 	// Set accelerometer configuration
-	uint8_t accel_old_config;
-	readByte(MPU9250_ADDRESS, ACCEL_CONFIG, &accel_old_config);
+	//uint8_t accel_old_config;
+	char accel_old_config = readByte(MPU9250_ADDRESS, ACCEL_CONFIG);
 
 	setState = (uint8_t)(accel_old_config & ~0xE0); // Clear self-test bits [7:5] 
 	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, setState);
@@ -174,7 +181,7 @@ void MPU9250::initAcceleroGyro()
 	// Set accelerometer sample rate configuration
 	// It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
 	// accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-	readByte(MPU9250_ADDRESS, ACCEL_CONFIG2, &accel_old_config);
+	accel_old_config = readByte(MPU9250_ADDRESS, ACCEL_CONFIG2);
 
 	setState = (uint8_t)(accel_old_config & ~0x0F); // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
 	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG2, setState );

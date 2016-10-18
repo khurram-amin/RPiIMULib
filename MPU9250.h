@@ -55,13 +55,14 @@ private:
 	int fid_Magneto;
 	int fid_AcceleroGyro;
 
-	int phyAdd2FID(uint16_t phyAdd); // Done
-	void readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto); // Done
+	int phyAdd2FID(uint8_t phyAdd); // Done
+	//void readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto); // Done
 	// void readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto); // Done
-	void writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write); // Done
+	//void writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write); // Done
 
 	char readByte(uint8_t devAddress, uint8_t regAddress);
 	void readBytes(uint8_t devAddress, uint8_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto);
+	void writeByte(uint8_t devAddress, uint8_t regAddress, uint8_t bucket2PutDataInto);
 	
 
 public:
