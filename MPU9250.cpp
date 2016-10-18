@@ -67,7 +67,7 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
 	#if DEBUG_MODE
 		int byteValue = *bucket2PutDataInto;
-		std::cout << "I just read " << std::hex << byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
+		std::cout << "I just read " << std::hex << (int)byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
 	#endif
 }
 
@@ -287,11 +287,11 @@ void MPU9250::initMagneto(void)
 
 	setState = (uint8_t)0x00; // Power down magnetometer  
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
-	delayMS(10);
+	delayMS(50);
 
 	setState = (uint8_t) 0x0F; // Enter Fuse ROM access mode
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); 
-	delayMS(10);
+	delayMS(50);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, noOfBytes2Read, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
 
@@ -301,7 +301,7 @@ void MPU9250::initMagneto(void)
 	
 	setState = (uint8_t)0x00; // Power down magnetometer  
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
-	delayMS(10);
+	delayMS(50);
 
 	// Configure the magnetometer for continuous read and highest resolution
 	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
@@ -310,7 +310,7 @@ void MPU9250::initMagneto(void)
 	uint8_t Mmode = (uint8_t)0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
 	setState = (uint8_t)((Mscale << 4) | Mmode);
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); // Set magnetometer data resolution and sample ODR
-	delayMS(10);
+	delayMS(50);
 }
 
 // This function will get current time in micro seconds.
