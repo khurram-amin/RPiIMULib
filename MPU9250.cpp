@@ -250,9 +250,9 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 
 		readBytes(AK8963_ADDRESS, AK8963_XOUT_L, noOfBytes2Read, &rawData[0]);
 
-		std::cout << "here " << rawData[6] << std::endl;
+		std::cout << "here " << (int)rawData[6] << std::endl;
 
-		if (!(rawData[6] & 0x08))
+		if (!((int)rawData[6] & 0x08))
 		{
 			
 			bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
