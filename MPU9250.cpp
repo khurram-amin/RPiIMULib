@@ -73,20 +73,20 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 
 
 // This function will read multiple bytes of data starting from regAddress + [0 to noOfBytes2Read] and put it into bucket2PutDataInto.
-void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto)
-{
-	// Iterate noOfBytes2Read of bytes times, calling readByte each time to read one single byte and incrementing the address.
-	for (uint8_t i = 0; i < noOfBytes2Read; i++)
-	{
-		//bucket2PutDataInto[i] = 0;
-		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
-	}
-	#if DEBUG_MODE
-	std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
-	std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
-	std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
-	#endif
-}
+// void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto)
+// {
+// 	// Iterate noOfBytes2Read of bytes times, calling readByte each time to read one single byte and incrementing the address.
+// 	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+// 	{
+// 		//bucket2PutDataInto[i] = 0;
+// 		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
+// 	}
+// 	#if DEBUG_MODE
+// 	std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
+// 	std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
+// 	std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
+// 	#endif
+// }
 
 
 char MPU9250::readByte(uint8_t devAddress, uint8_t regAddress)
@@ -95,6 +95,15 @@ char MPU9250::readByte(uint8_t devAddress, uint8_t regAddress)
 	int phy2FID = phyAdd2FID(devAddress);
 
 	return wiringPiI2CReadReg8(phy2FID, regAddress);
+}
+
+void MPU9250::readBytes(uint8_t devAddress, uint8_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto)
+{
+	char data;
+	for (char i = 0; i < noOfBytes2Read; i++)
+	{
+		bucket2PutDataInto[i] = readByte(devAddress, regAddress+i);
+	}
 }
 
 // Write One-byte of data at regAddress of device devAddress.
