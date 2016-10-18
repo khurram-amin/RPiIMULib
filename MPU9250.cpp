@@ -6,6 +6,12 @@
 //					2. Open AK8963 as Linux File for communication
 MPU9250::MPU9250()
 {
+
+	Ascale = AFS_2G;     // AFS_2G, AFS_4G, AFS_8G, AFS_16G
+	Gscale = GFS_250DPS; // GFS_250DPS, GFS_500DPS, GFS_1000DPS, GFS_2000DPS
+	Mscale = MFS_16BITS; // MFS_14BITS or MFS_16BITS, 14-bit or 16-bit magnetometer resolution
+	Mmode = 0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
+
 	fid_Magneto = wiringPiI2CSetup(AK8963_ADDRESS);
 	fid_AcceleroGyro = wiringPiI2CSetup(MPU9250_ADDRESS);
 
@@ -130,64 +136,56 @@ void MPU9250::writeByte(uint8_t devAddress, uint8_t regAddress, uint8_t bucket2P
 // Initilize MPU9250 device
 void MPU9250::initAcceleroGyro()
 {
-	uint8_t Gscale = 0;
-	uint8_t Ascale = 0;
+	// uint8_t Gscale = GFS_250DPS;
+	// uint8_t Ascale = AFS_2G;
 	// Wake the device up.
-	uint8_t setState = (uint8_t)0x00;// (D7=0=No-Reset-Internel-registers + D6=0=No-Sleep + D5=0=No-Cycling + D4=0=Gyro-Sense-Path-Connected + D3=0=Power-Up-PTAT-voltage-generator-&-PTAT-ADC + D2,D1,D0=000=INTERNAL-OSCILATOR-20-MHz )
-	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
+	// (D7=0=No-Reset-Internel-registers + D6=0=No-Sleep + D5=0=No-Cycling + D4=0=Gyro-Sense-Path-Connected + D3=0=Power-Up-PTAT-voltage-generator-&-PTAT-ADC + D2,D1,D0=000=INTERNAL-OSCILATOR-20-MHz )
+	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00);
 	delayMS(100); //Delay 100 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
 
 	// get stable time source
-	setState = (uint8_t)0x01; // Set Clock source to be PLL
-	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
+	// Set Clock source to be PLL
+	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);
 
 	// Configure Gyro and Accelerometer
-	setState = (uint8_t)0x03; //(D7=X + D6=0=Overwrite-FIFO-when-it-gets-full + D5:D3=000=Disable-FSYNCH + D2:D0=011=GyroBW-41Hz-GyroDelay-5.9ms-Fs-1KHz-TempBW-42Hz-TempDelay-4.8ms)
-	writeByte(MPU9250_ADDRESS, CONFIG, setState);
+	//(D7=X + D6=0=Overwrite-FIFO-when-it-gets-full + D5:D3=000=Disable-FSYNCH + D2:D0=011=GyroBW-41Hz-GyroDelay-5.9ms-Fs-1KHz-TempBW-42Hz-TempDelay-4.8ms)
+	writeByte(MPU9250_ADDRESS, CONFIG, 0x03);
 
 	// Set sample rate
-	setState = (uint8_t)0x04; //Use a 200 Hz rate; the same rate set in CONFIG above
-	writeByte(MPU9250_ADDRESS, SMPLRT_DIV, setState);
+	//Use a 200 Hz rate; the same rate set in CONFIG above
+	writeByte(MPU9250_ADDRESS, SMPLRT_DIV, 0x04);
 
 	// Set gyroscope full scale range
 	// Range selects FS_SEL and AFS_SEL are 0 - 3, so 2-bit values are left-shifted into positions 4:3
 	//uint8_t gyro_old_config;
 	//readByte (MPU9250_ADDRESS, GYRO_CONFIG, &gyro_old_config);
-	char gyro_old_config = readByte (MPU9250_ADDRESS, GYRO_CONFIG);
-	
-	setState = (gyro_old_config & ~0xE0); // Clear self-test bits [7:5] 
-	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
-
-	setState = (gyro_old_config & ~0x18); // Clear AFS bits [4:3]
-	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
-
-	setState = (gyro_old_config | Gscale << 3); // Set full scale range for the gyro
-	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, setState);
+	uint8_t c = readByte(MPU9250_ADDRESS, GYRO_CONFIG);
+	//Clear self-test bits [7:5] 
+	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, c & ~0xE0 );
+	// Clear AFS bits [4:3]
+	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, c & ~0x18);
+	// Set full scale range for the gyro
+	writeByte(MPU9250_ADDRESS, GYRO_CONFIG, c | Gscale << 3);
 
 
 	// Set accelerometer configuration
 	//uint8_t accel_old_config;
-	char accel_old_config = readByte(MPU9250_ADDRESS, ACCEL_CONFIG);
-
-	setState = (uint8_t)(accel_old_config & ~0xE0); // Clear self-test bits [7:5] 
-	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, setState);
-
-	setState = (uint8_t)(accel_old_config & ~0x18);  // Clear AFS bits [4:3]
-	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, setState);
-
-	setState = (uint8_t)(accel_old_config | Ascale << 3); // Set full scale range for the accelerometer 
-	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, setState);
+	c = readByte(MPU9250_ADDRESS, ACCEL_CONFIG);
+	// Clear self-test bits [7:5] 
+	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, c & ~0xE0);
+	// Clear AFS bits [4:3]
+	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG,  c & ~0x18);
+	// Set full scale range for the accelerometer 
+	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, c | Ascale << 3);
 
 	// Set accelerometer sample rate configuration
 	// It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
 	// accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-	accel_old_config = readByte(MPU9250_ADDRESS, ACCEL_CONFIG2);
-
-	setState = (uint8_t)(accel_old_config & ~0x0F); // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
-	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG2, setState );
-
-	setState = (uint8_t)(accel_old_config | 0x03); // Set accelerometer rate to 1 kHz and bandwidth to 41 Hz
-	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG2, setState);
+	c = readByte(MPU9250_ADDRESS, ACCEL_CONFIG2);
+	// Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
+	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG2, c & ~0x0F );
+	// Set accelerometer rate to 1 kHz and bandwidth to 41 Hz
+	writeByte(MPU9250_ADDRESS, ACCEL_CONFIG2, c | 0x03);
 	// The accelerometer, gyro, and thermometer are set to 1 kHz sample rates, 
 	// but all these rates are further reduced by a factor of 5 to 200 Hz because of the SMPLRT_DIV setting
 
@@ -195,11 +193,9 @@ void MPU9250::initAcceleroGyro()
 	// Configure Interrupts and Bypass Enable
 	// Set interrupt pin active high, push-pull, and clear on read of INT_STATUS, enable I2C_BYPASS_EN so additional chips 
 	// can join the I2C bus and all can be controlled by the Arduino as master
-	setState = (uint8_t)0x22;
-	writeByte(MPU9250_ADDRESS, INT_PIN_CFG, setState);
-
-	setState = (uint8_t)0x01;  // Enable data ready (bit 0) interrupt
-	writeByte(MPU9250_ADDRESS, INT_ENABLE, setState);
+	writeByte(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);
+	// Enable data ready (bit 0) interrupt
+	writeByte(MPU9250_ADDRESS, INT_ENABLE, 0x01);
 
 }
 
@@ -305,37 +301,30 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 }
 
 // This function will reset Accelerometer + Gyroscope to their default state
-	void MPU9250::resetAcceleroGyro(void)
-	{
-		uint8_t setState = (uint8_t)0x80;
-		writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
-		delayMS(100);
-	}
+void MPU9250::resetAcceleroGyro(void)
+{
+	uint8_t setState = (uint8_t)0x80;
+	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
+	delayMS(100);
+}
 
 
 // This function will initiate the Magnetometer Sensor
-	void MPU9250::initMagneto(void)
-	{
+void MPU9250::initMagneto(void)
+{
 	// First extract the factory calibration for each magnetometer axis
-		uint8_t noOfBytes2Read = 3;
-		uint8_t* rawData = new uint8_t[noOfBytes2Read];
-		for (uint8_t i = 0; i < noOfBytes2Read; i++)
-		{
-			rawData[i] = 0;
-		}
 
-		uint8_t setState = (uint8_t)0x00;
+	uint8_t noOfBytes2Read = 3;
+	uint8_t rawData[3];
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+	{
+		rawData[i] = 0;
+	}
 
-	//setState = (uint8_t)0x00; // Power down magnetometer  
-	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
-
-		std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x00) << std::endl;
-		delayMS(50);
-
-	//setState = (uint8_t) 0x0F; // Enter Fuse ROM access mode
-	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); 
-		std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x0F) << std::endl;
-		delayMS(50);
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00);
+	delayMS(10);
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x0F); 
+	delayMS(10);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, noOfBytes2Read, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
 
@@ -343,17 +332,13 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 	//destination[1] = (float)(rawData[1] - 128) / 256.0f + 1.0f;
 	//destination[2] = (float)(rawData[2] - 128) / 256.0f + 1.0f;
 	
-	setState = (uint8_t)0x00; // Power down magnetometer  
-	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
-	delayMS(50);
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00);
+	delayMS(10);
 
 	// Configure the magnetometer for continuous read and highest resolution
 	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
 	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
-	uint8_t Mscale = (uint8_t)1;
-	uint8_t Mmode = (uint8_t)0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
-setState = (uint8_t)((Mscale << 4) | Mmode);
-	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); // Set magnetometer data resolution and sample ODR
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
 	delayMS(50);
 }
 

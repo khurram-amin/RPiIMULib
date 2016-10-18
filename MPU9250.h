@@ -47,10 +47,38 @@
 
 #define DEBUG_MODE 1 //AKA Show me everything
 
+////////////////////////////////////////////////
+// Set initial input parameters
+enum Ascale {
+	AFS_2G = 0,
+	AFS_4G,
+	AFS_8G,
+	AFS_16G
+};
+
+enum Gscale {
+	GFS_250DPS = 0,
+	GFS_500DPS,
+	GFS_1000DPS,
+	GFS_2000DPS
+};
+
+enum Mscale {
+	MFS_14BITS = 0, // 0.6 mG per LSB
+	MFS_16BITS      // 0.15 mG per LSB
+};
+
+////////////////////////////////////////////////
 // Class For MPU9250 related thingies.
 class MPU9250
 {
 private:
+
+	uint8_t Ascale;
+	uint8_t Gscale;
+	uint8_t Mscale;
+	uint8_t Mmode;
+
 	// Blah
 	int fid_Magneto;
 	int fid_AcceleroGyro;
