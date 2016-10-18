@@ -39,6 +39,9 @@
 #include <exception>
 #include "MPU9250ExceptionsDefs.h"
 
+// To generate delays
+#include <sys/time.h>
+
 
 #define DEBUG_MODE 0 //AKA Show me everything
 
@@ -56,7 +59,7 @@ public:
 	
 	int phyAdd2FID(uint16_t phyAdd); // Done
 	void readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto); // Done
-	void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto); // Done
+	void readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto); // Done
 	void writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write); // Done
 	
 	void initAcceleroGyro(void);
@@ -82,6 +85,10 @@ public:
 	bool selfTestMagneto(void);
 	bool selfTestAccelero(void);
 	bool selfTestGyro(void);
+
+	unsigned long micros();
+	unsigned long millis();
+	void delay(unsigned long ms);
 
 };
 

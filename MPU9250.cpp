@@ -38,7 +38,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 		phy2FID = fid_AcceleroGyro;
 
 		#ifdef DEBUG_MODE
-			std::cout << "Physical Address to File ID translation for MPU9250. " << MPU9250_ADDRESS  << " converted into " << fid_AcceleroGyro "."<< std::endl;
+			std::cout << "Physical Address to File ID translation for MPU9250. " << MPU9250_ADDRESS  << " converted into " << fid_AcceleroGyro << "."<< std::endl;
 		#endif
 
 		return phy2FID;
@@ -64,7 +64,7 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	// Convert Physical Address of Device into FileID
 	int phy2FID = phyAdd2FID(devAddress);
 	// Read Byte from register
-	bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
+	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
 	#ifdef DEBUG_MODE
 		std::cout << "I just read " << bucket2PutDataInto  << " from register " << regAddress << " of device " << phy2FID << "."<< std::endl;
 	#endif
@@ -77,10 +77,11 @@ void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBy
 	// Iterate noOfBytes2Read of bytes times, calling readByte each time to read one single byte and incrementing the address.
 	for (uint8_t i = 0; i < noOfBytes2Read; i++)
 	{
-		readByte(devAddress, regAddress+i, bucket2PutDataInto[i]);
+		//bucket2PutDataInto[i] = 0;
+		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
 	}
 	#ifdef DEBUG_MODE
-		std::cout << "I just read " << noOfBytes2Read  << " bytes from " << regAddress << " of device " << phy2FID << "."<< std::endl;
+		std::cout << "I just read " << noOfBytes2Read  << " bytes from " << regAddress << " of device " << devAddress << "." << std::endl;
 		std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
 		std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
 	#endif
@@ -103,9 +104,9 @@ void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2W
 // Initilize MPU9250 device
 void MPU9250::initAcceleroGyro()
 {
-	uint8_t MScale = 1;
-	uint8_t GScale = 0;
-	uint8_t AScale = 0;
+	uint8_t Mscale = 1;
+	uint8_t Gscale = 0;
+	uint8_t Ascale = 0;
 	// Wake the device up.
 	uint8_t setState = (uint8_t)0x00;// (D7=0=No-Reset-Internel-registers + D6=0=No-Sleep + D5=0=No-Cycling + D4=0=Gyro-Sense-Path-Connected + D3=0=Power-Up-PTAT-voltage-generator-&-PTAT-ADC + D2,D1,D0=000=INTERNAL-OSCILATOR-20-MHz )
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
@@ -179,15 +180,49 @@ void MPU9250::initAcceleroGyro()
 // This function will read three 16-bit registers corresponding to RAW accelerometer readings
 void MPU9250::readAcceleroRawData(uint16_t* bucket2PutDataInto)
 {
-	uint8_t rawData[6];
+	//uint8_t* rawData[6];
+	uint8_t *rawData = new uint8_t[6];
+
+	for (uint8_t i = 0; i < 6; i++)
+	{
+		rawData[i] = 0;
+	}
 	uint8_t noOfBytes2Read = 6;
-	readBytes(MPU9250_ADDRESS, ACCEL_XOUT_H, noOfBytes2Read, &rawData);
+	readBytes(MPU9250_ADDRESS, ACCEL_XOUT_H, noOfBytes2Read, rawData);
+	
 	bucket2PutDataInto[0] = (uint16_t)(((uint16_t)rawData[0] << 8) | rawData[1]);
 	bucket2PutDataInto[1] = (uint16_t)(((uint16_t)rawData[2] << 8) | rawData[3]);
 	bucket2PutDataInto[2] = (uint16_t)(((uint16_t)rawData[4] << 8) | rawData[5]);
 }
 
+unsigned long MPU9250::micros()
+{
+  struct timeval tv;
+  gettimeofday(&tv,NULL);
+  unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+  return time_in_micros;
+}
 
+unsigned long MPU9250::millis()
+{
+  struct timeval tv;
+  gettimeofday(&tv,NULL);
+  unsigned long time_in_millis = 1000 * tv.tv_sec + tv.tv_usec/1000;
+  return time_in_millis;
+}
+
+void MPU9250::delay(unsigned long ms)
+{
+  uint32_t start = micros();
+
+  while (ms > 0) {
+    //yield();
+    while ( ms > 0 && (micros() - start) >= 1000) {
+      ms--;
+      start += 1000;
+    }
+  }
+}
 
 
 

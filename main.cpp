@@ -2,23 +2,28 @@
 
 int main()
 {
-	short *data = new short[3];
+	uint16_t *data = new uint16_t[3];
+	data[0] = 0;
+	data[1] = 0;
+	data[2] = 0;
 	
 	MPU9250 mpu9250;
 	
-	cout<<"config mpu2950 ";
-	mpu9250.initMPU9250();
-	cout<<"done!"<<endl;
+	std::cout<<"config mpu2950 ";
+	
+	mpu9250.initAcceleroGyro();
+	
+	std::cout<<"done!"<<std::endl;
 	
 	while(1)
 	{
-		mpu9250.readAccelData(data);
+		mpu9250.readAcceleroRawData(data);
 
 		for(int i=0; i<3; i++)
 		{
 			std::cout<< i << ": " << 1.0f*data[i] << std::endl;
 		}
-		std::cout<<std::endlstd::<<endlstd::<<endl;
-		delay(10);
+		std::cout<<std::endl;
+		mpu9250.delay(10);
 	}
 }
