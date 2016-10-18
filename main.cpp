@@ -24,6 +24,7 @@ int main()
 			std::cout<< i << ": " << 1.0f*data[i] << std::endl;
 		}
 		std::cout<<std::endl;
-		mpu9250.delay(10);
+
+		mpu9250.delayMS(10);
 	}
 }

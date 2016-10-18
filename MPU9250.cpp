@@ -110,7 +110,7 @@ void MPU9250::initAcceleroGyro()
 	// Wake the device up.
 	uint8_t setState = (uint8_t)0x00;// (D7=0=No-Reset-Internel-registers + D6=0=No-Sleep + D5=0=No-Cycling + D4=0=Gyro-Sense-Path-Connected + D3=0=Power-Up-PTAT-voltage-generator-&-PTAT-ADC + D2,D1,D0=000=INTERNAL-OSCILATOR-20-MHz )
 	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
-	delay(100); //Delay 100 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
+	delayMS(100); //Delay 100 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt
 
 	// get stable time source
 	setState = (uint8_t)0x01; // Set Clock source to be PLL
@@ -180,21 +180,42 @@ void MPU9250::initAcceleroGyro()
 // This function will read three 16-bit registers corresponding to RAW accelerometer readings
 void MPU9250::readAcceleroRawData(uint16_t* bucket2PutDataInto)
 {
-	//uint8_t* rawData[6];
-	uint8_t *rawData = new uint8_t[6];
+	uint8_t* rawData = new uint8_t[6];
 
 	for (uint8_t i = 0; i < 6; i++)
 	{
 		rawData[i] = 0;
 	}
 	uint8_t noOfBytes2Read = 6;
-	readBytes(MPU9250_ADDRESS, ACCEL_XOUT_H, noOfBytes2Read, rawData);
+	readBytes(MPU9250_ADDRESS, ACCEL_XOUT_H, noOfBytes2Read, &rawData[0]);
 	
 	bucket2PutDataInto[0] = (uint16_t)(((uint16_t)rawData[0] << 8) | rawData[1]);
 	bucket2PutDataInto[1] = (uint16_t)(((uint16_t)rawData[2] << 8) | rawData[3]);
 	bucket2PutDataInto[2] = (uint16_t)(((uint16_t)rawData[4] << 8) | rawData[5]);
 }
 
+
+// This function will read three 16-Bit registers correspoding to the RAW gyroscope readings
+void MPU9250::readGyroRawData(uint16_t* bucket2PutDataInto)
+{
+	// Define and initilize an array to store register values.
+	uint8_t* rawData = new uint8_t[6];
+	for (uint8_t i = 0; i < 6; i++)
+	{
+		rawData[i] = 0;
+	}
+
+	uint8_t noOfBytes2Read = 6;
+	readBytes(MPU9250_ADDRESS, GYRO_XOUT_H, noOfBytes2Read, &rawData[0]);
+	
+	bucket2PutDataInto[0] = (uint16_t)(((uint16_t)rawData[0] << 8) | rawData[1]);
+	bucket2PutDataInto[1] = (uint16_t)(((uint16_t)rawData[2] << 8) | rawData[3]);
+	bucket2PutDataInto[2] = (uint16_t)(((uint16_t)rawData[4] << 8) | rawData[5]);
+
+}
+
+
+// This function will get current time in micro seconds.
 unsigned long MPU9250::micros()
 {
   struct timeval tv;
@@ -203,6 +224,8 @@ unsigned long MPU9250::micros()
   return time_in_micros;
 }
 
+
+// This function will get current time in milli senconds.
 unsigned long MPU9250::millis()
 {
   struct timeval tv;
@@ -211,19 +234,20 @@ unsigned long MPU9250::millis()
   return time_in_millis;
 }
 
-void MPU9250::delay(unsigned long ms)
+
+// This function will generate a delay in milli seconds.
+void MPU9250::delayMS(unsigned long ms)
 {
-  uint32_t start = micros();
+  unsigned long start = micros();
+  usleep(ms*1000); // Sleep
+  unsigned long end = micros();
 
-  while (ms > 0) {
-    //yield();
-    while ( ms > 0 && (micros() - start) >= 1000) {
-      ms--;
-      start += 1000;
-    }
-  }
+
+  #ifdef DEBUG_MODE
+  	float dleayTime = (end - start)/1000;
+    std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
+  #endif
 }
-
 
 
 
