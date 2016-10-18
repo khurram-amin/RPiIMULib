@@ -59,6 +59,8 @@ private:
 	void readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket2PutDataInto); // Done
 	void readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBytes2Read, uint8_t* bucket2PutDataInto); // Done
 	void writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write); // Done
+
+	char readByte(uint8_t devAddress, uint8_t regAddress);
 	
 
 public:

@@ -11,15 +11,15 @@ MPU9250::MPU9250()
 
 	#if DEBUG_MODE
 	// Show what are you going to do, as you do it
-		if (fid_AcceleroGyro != -1)
-			std::cout << "Opened /dev/I2C file for communication with AcceleroGyro. File ID is: " << fid_AcceleroGyro << std::endl;
-		else
-			std::cout << "Couldn't open /dev/I2C file for communication with AcceleroGyro." << std::endl;
+	if (fid_AcceleroGyro != -1)
+		std::cout << "Opened /dev/I2C file for communication with AcceleroGyro. File ID is: " << fid_AcceleroGyro << std::endl;
+	else
+		std::cout << "Couldn't open /dev/I2C file for communication with AcceleroGyro." << std::endl;
 
-		if (fid_Magneto != -1)
-			std::cout << "Opened /dev/I2C file for communication with Magneto. File ID is: " << fid_Magneto << std::endl;
-		else
-			std::cout << "Couldn't open /dev/I2C file for communication with Magneto." << std::endl;
+	if (fid_Magneto != -1)
+		std::cout << "Opened /dev/I2C file for communication with Magneto. File ID is: " << fid_Magneto << std::endl;
+	else
+		std::cout << "Couldn't open /dev/I2C file for communication with Magneto." << std::endl;
 	#endif
 
 	if (fid_AcceleroGyro==-1) 
@@ -38,7 +38,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 		phy2FID = fid_AcceleroGyro;
 
 		#if DEBUG_MODE
-			std::cout << "Physical Address to File ID translation for MPU9250. " << std::hex << MPU9250_ADDRESS  << " converted into " << std::hex << fid_AcceleroGyro << "."<< std::endl;
+		std::cout << "Physical Address to File ID translation for MPU9250. " << std::hex << MPU9250_ADDRESS  << " converted into " << std::hex << fid_AcceleroGyro << "."<< std::endl;
 		#endif
 
 		return phy2FID;
@@ -48,7 +48,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 		phy2FID = fid_Magneto;
 
 		#if DEBUG_MODE
-			std::cout << "Physical Address to File ID translation for AK8963. " << std::hex << AK8963_ADDRESS  << " converted into " << std::hex << fid_Magneto << "." << std::endl;
+		std::cout << "Physical Address to File ID translation for AK8963. " << std::hex << AK8963_ADDRESS  << " converted into " << std::hex << fid_Magneto << "." << std::endl;
 		#endif
 
 		return phy2FID;
@@ -66,8 +66,8 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	// Read Byte from register
 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
 	#if DEBUG_MODE
-		int byteValue = *bucket2PutDataInto;
-		std::cout << "I just read " << std::hex << (int)byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
+	int byteValue = *bucket2PutDataInto;
+	std::cout << "I just read " << std::hex << (int)byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
 	#endif
 }
 
@@ -82,12 +82,20 @@ void MPU9250::readBytes(uint16_t devAddress, uint16_t regAddress, uint8_t noOfBy
 		readByte(devAddress, regAddress+i, &bucket2PutDataInto[i]);
 	}
 	#if DEBUG_MODE
-		std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
-		std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
-		std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
+	std::cout << "I just read " << (int) noOfBytes2Read  << " bytes from register number " << std::hex << regAddress << " of device " << std::hex << devAddress << "." << std::endl;
+	std::cout << "WAllah, those were alot of reads. Why would you do that to me, Priya! ? " << std::endl;
+	std::cout << "You better be doing something good with all those reads otherwise I am going to call Gull Khan! " << std::endl;
 	#endif
 }
 
+
+char MPU9250::readByte(uint8_t devAddress, uint8_t regAddress)
+{
+	char data;
+	int phy2FID = phyAdd2FID(devAddress);
+
+	return wiringPiI2CReadReg8(phy2FID, regAddress);
+}
 
 // Write One-byte of data at regAddress of device devAddress.
 void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2Write)
@@ -98,7 +106,7 @@ void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2W
 	int write_done = wiringPiI2CWriteReg8(phy2FID, (int)regAddress, (int)byte2Write);
 
 	#if DEBUG_MODE
-		std::cout << "I just wrote " << std::hex << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
+	std::cout << "I just wrote " << std::hex << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
 	#endif
 }
 
@@ -243,58 +251,72 @@ void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
 		rawData[i] = 0;
 	}
 
-	uint8_t ST2_reg = 0;
-	readByte(AK8963_ADDRESS, AK8963_ST1, &ST2_reg); 
+	// uint8_t ST2_reg = 0;
+	// readByte(AK8963_ADDRESS, AK8963_ST1, &ST2_reg); 
 
-	if ( ST2_reg & 0x01 )
-	{
+	// if ( ST2_reg & 0x01 )
+	// {
 
-		readBytes(AK8963_ADDRESS, AK8963_XOUT_L, noOfBytes2Read, &rawData[0]);
+	// 	readBytes(AK8963_ADDRESS, AK8963_XOUT_L, noOfBytes2Read, &rawData[0]);
 
-		std::cout << "here " << (int)rawData[6] << std::endl;
+	// 	std::cout << "here " << (int)rawData[6] << std::endl;
 
-		if (!((int)rawData[6] & 0x08))
-		{
-			
-			bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
-			bucket2PutDataInto[1] = (int16_t)(((int16_t)rawData[3] << 8) | rawData[2]);  // Data stored as little Endian
-			bucket2PutDataInto[2] = (int16_t)(((int16_t)rawData[5] << 8) | rawData[4]);
-		}
+	// 	if (!((int)rawData[6] & 0x08))
+	// 	{
+
+	// 		bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
+	// 		bucket2PutDataInto[1] = (int16_t)(((int16_t)rawData[3] << 8) | rawData[2]);  // Data stored as little Endian
+	// 		bucket2PutDataInto[2] = (int16_t)(((int16_t)rawData[5] << 8) | rawData[4]);
+	// 	}
+	// }
+
+	if (readByte(AK8963_ADDRESS, AK8963_ST1) & 0x01)
+	{ // wait for magnetometer data ready bit to be set
+			readBytes(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
+			uint8_t c = rawData[6]; // End data read by reading ST2 register
+
+			if (!(c & 0x08)) 
+			{ // Check if magnetic sensor overflow set, if not then report data
+
+				bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
+				bucket2PutDataInto[1] = (int16_t)(((int16_t)rawData[3] << 8) | rawData[2]);  // Data stored as little Endian
+				bucket2PutDataInto[2] = (int16_t)(((int16_t)rawData[5] << 8) | rawData[4]);
+			}
 	}
 }
 
 // This function will reset Accelerometer + Gyroscope to their default state
-void MPU9250::resetAcceleroGyro(void)
-{
-	uint8_t setState = (uint8_t)0x80;
-	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
-	delayMS(100);
-}
+	void MPU9250::resetAcceleroGyro(void)
+	{
+		uint8_t setState = (uint8_t)0x80;
+		writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
+		delayMS(100);
+	}
 
 
 // This function will initiate the Magnetometer Sensor
-void MPU9250::initMagneto(void)
-{
-	// First extract the factory calibration for each magnetometer axis
-	uint8_t noOfBytes2Read = 3;
-	uint8_t* rawData = new uint8_t[noOfBytes2Read];
-	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+	void MPU9250::initMagneto(void)
 	{
-		rawData[i] = 0;
-	}
+	// First extract the factory calibration for each magnetometer axis
+		uint8_t noOfBytes2Read = 3;
+		uint8_t* rawData = new uint8_t[noOfBytes2Read];
+		for (uint8_t i = 0; i < noOfBytes2Read; i++)
+		{
+			rawData[i] = 0;
+		}
 
-	uint8_t setState = (uint8_t)0x00;
+		uint8_t setState = (uint8_t)0x00;
 
 	//setState = (uint8_t)0x00; // Power down magnetometer  
 	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
-	
-	std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x00) << std::endl;
-	delayMS(50);
+
+		std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x00) << std::endl;
+		delayMS(50);
 
 	//setState = (uint8_t) 0x0F; // Enter Fuse ROM access mode
 	//writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); 
-	std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x0F) << std::endl;
-	delayMS(50);
+		std::cout<< "Result of directly writing is: " << wiringPiI2CWriteReg8(fid_Magneto, AK8963_CNTL, 0x0F) << std::endl;
+		delayMS(50);
 
 	readBytes(AK8963_ADDRESS, AK8963_ASAX, noOfBytes2Read, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
 
@@ -311,7 +333,7 @@ void MPU9250::initMagneto(void)
 	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
 	uint8_t Mscale = (uint8_t)1;
 	uint8_t Mmode = (uint8_t)0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
-	setState = (uint8_t)((Mscale << 4) | Mmode);
+setState = (uint8_t)((Mscale << 4) | Mmode);
 	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); // Set magnetometer data resolution and sample ODR
 	delayMS(50);
 }
@@ -319,34 +341,34 @@ void MPU9250::initMagneto(void)
 // This function will get current time in micro seconds.
 unsigned long MPU9250::micros()
 {
-  struct timeval tv;
-  gettimeofday(&tv,NULL);
-  unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
-  return time_in_micros;
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+	return time_in_micros;
 }
 
 
 // This function will get current time in milli senconds.
 unsigned long MPU9250::millis()
 {
-  struct timeval tv;
-  gettimeofday(&tv,NULL);
-  unsigned long time_in_millis = 1000 * tv.tv_sec + tv.tv_usec/1000;
-  return time_in_millis;
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	unsigned long time_in_millis = 1000 * tv.tv_sec + tv.tv_usec/1000;
+	return time_in_millis;
 }
 
 
 // This function will generate a delay in milli seconds.
 void MPU9250::delayMS(unsigned long ms)
 {
-  unsigned long start = micros();
+	unsigned long start = micros();
   usleep(ms*1000); // Sleep
   unsigned long end = micros();
 
 
   #if DEBUG_MODE
-  	float dleayTime = (end - start)/1000;
-    std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
+  float dleayTime = (end - start)/1000;
+  std::cout << "Generated a delay of " << (float) dleayTime << " milli seconds." << std::endl;
   #endif
 }
 

@@ -31,25 +31,27 @@ int main()
 	mpu9250.initMagneto();
 	std::cout<<"done!"<<std::endl;
 	
+	
+	
 	while(1)
 	{
-		mpu9250.readAcceleroRawData(accel_data);
+		// mpu9250.readAcceleroRawData(accel_data);
 
-		for(int i=0; i<3; i++)
-		{
-			std::cout<< i << ": " << 1.0f*accel_data[i] << std::endl;
-		}
+		// for(int i=0; i<3; i++)
+		// {
+		// 	std::cout<< i << ": " << 1.0f*accel_data[i] << std::endl;
+		// }
 		
-		mpu9250.readGyroRawData(gyro_data);
+		// mpu9250.readGyroRawData(gyro_data);
 
-		for(int i=0; i<3; i++)
-		{
-			std::cout<< i << ": " << 1.0f*gyro_data[i] << std::endl;
-		}
+		// for(int i=0; i<3; i++)
+		// {
+		// 	std::cout<< i << ": " << 1.0f*gyro_data[i] << std::endl;
+		// }
 
-		mpu9250.readTempRawData(temp_data);
+		// mpu9250.readTempRawData(temp_data);
 
-		std::cout<< "T" << ": " << *temp_data << std::endl;
+		// std::cout<< "T" << ": " << *temp_data << std::endl;
 		
 		mpu9250.readMagnetoRawData(magneto_data);
 
