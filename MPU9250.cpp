@@ -38,7 +38,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 		phy2FID = fid_AcceleroGyro;
 
 		#if DEBUG_MODE
-			std::cout << "Physical Address to File ID translation for MPU9250. " << MPU9250_ADDRESS  << " converted into " << fid_AcceleroGyro << "."<< std::endl;
+			std::cout << "Physical Address to File ID translation for MPU9250. " << std::hex << MPU9250_ADDRESS  << " converted into " << std::hex << fid_AcceleroGyro << "."<< std::endl;
 		#endif
 
 		return phy2FID;
@@ -48,7 +48,7 @@ int MPU9250::phyAdd2FID(uint16_t phyAdd)
 		phy2FID = fid_Magneto;
 
 		#if DEBUG_MODE
-			std::cout << "Physical Address to File ID translation for AK8963. " << AK8963_ADDRESS  << " converted into " << fid_Magneto << "." << std::endl;
+			std::cout << "Physical Address to File ID translation for AK8963. " << std::hex << AK8963_ADDRESS  << " converted into " << std::hex << fid_Magneto << "." << std::endl;
 		#endif
 
 		return phy2FID;
@@ -98,7 +98,7 @@ void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2W
 	int write_done = wiringPiI2CWriteReg8(phy2FID, (int)regAddress, (int)byte2Write);
 
 	#if DEBUG_MODE
-		std::cout << "I just wrote " << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
+		std::cout << "I just wrote " << std::hex << byte2Write  << " on register " << regAddress << " of device " << phy2FID << " with result: " << write_done << "."<< std::endl;
 	#endif
 }
 
