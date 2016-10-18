@@ -66,7 +66,8 @@ void MPU9250::readByte(uint16_t devAddress, uint16_t regAddress, uint8_t* bucket
 	// Read Byte from register
 	*bucket2PutDataInto = (uint8_t)wiringPiI2CReadReg8(phy2FID, (int)regAddress);
 	#if DEBUG_MODE
-		std::cout << "I just read " << std::hex << (int*)bucket2PutDataInto  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
+		int byteValue = *bucket2PutDataInto;
+		std::cout << "I just read " << std::hex << byteValue  << " from register " << std::hex << regAddress << " of device " << std::hex << devAddress << "."<< std::endl;
 	#endif
 }
 
