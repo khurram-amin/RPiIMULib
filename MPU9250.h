@@ -66,19 +66,19 @@ public:
 	MPU9250(); //Done
 	
 	void initAcceleroGyro(void); //Done
-	void initMagneto(void);
+	void initMagneto(void); //Done
 
-	void resetAcceleroGyro(void);
+	void resetAcceleroGyro(void); //Done
 	void resetMagneto(void);
 
 	uint16_t getMagnetoResoluiotn(void);
 	uint16_t getAcceleroResolution(void);
 	uint16_t getGyroResolution(void);
 	
-	void readMagnetoRawData(uint16_t* bucket2PutDataInto);
-	void readAcceleroRawData(uint16_t* bucket2PutDataInto);
-	void readGyroRawData(uint16_t* bucket2PutDataInto);
-	void readTempData(uint16_t* bucket2PutDataInto);
+	void readMagnetoRawData(uint16_t* bucket2PutDataInto); // Done
+	void readAcceleroRawData(uint16_t* bucket2PutDataInto); //Done
+	void readGyroRawData(uint16_t* bucket2PutDataInto); //Done
+	void readTempRawData(uint16_t* bucket2PutDataInto); // Done
 	
 	
 	void calibrateAccelero(void);

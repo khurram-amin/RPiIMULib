@@ -104,7 +104,6 @@ void MPU9250::writeByte(uint16_t devAddress, uint16_t regAddress, uint8_t byte2W
 // Initilize MPU9250 device
 void MPU9250::initAcceleroGyro()
 {
-	uint8_t Mscale = 1;
 	uint8_t Gscale = 0;
 	uint8_t Ascale = 0;
 	// Wake the device up.
@@ -180,18 +179,18 @@ void MPU9250::initAcceleroGyro()
 // This function will read three 16-bit registers corresponding to RAW accelerometer readings
 void MPU9250::readAcceleroRawData(uint16_t* bucket2PutDataInto)
 {
-	uint8_t* rawData = new uint8_t[6];
-
-	for (uint8_t i = 0; i < 6; i++)
+	uint8_t noOfBytes2Read = 6;
+	uint8_t* rawData = new uint8_t[noOfBytes2Read];
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
 	{
 		rawData[i] = 0;
 	}
-	uint8_t noOfBytes2Read = 6;
+	
 	readBytes(MPU9250_ADDRESS, ACCEL_XOUT_H, noOfBytes2Read, &rawData[0]);
 	
-	bucket2PutDataInto[0] = (uint16_t)(((uint16_t)rawData[0] << 8) | rawData[1]);
-	bucket2PutDataInto[1] = (uint16_t)(((uint16_t)rawData[2] << 8) | rawData[3]);
-	bucket2PutDataInto[2] = (uint16_t)(((uint16_t)rawData[4] << 8) | rawData[5]);
+	bucket2PutDataInto[0] = (uint16_t)(( ((uint16_t)rawData[0]) << 8) | rawData[1]);
+	bucket2PutDataInto[1] = (uint16_t)(( ((uint16_t)rawData[2]) << 8) | rawData[3]);
+	bucket2PutDataInto[2] = (uint16_t)(( ((uint16_t)rawData[4]) << 8) | rawData[5]);
 }
 
 
@@ -199,21 +198,115 @@ void MPU9250::readAcceleroRawData(uint16_t* bucket2PutDataInto)
 void MPU9250::readGyroRawData(uint16_t* bucket2PutDataInto)
 {
 	// Define and initilize an array to store register values.
-	uint8_t* rawData = new uint8_t[6];
-	for (uint8_t i = 0; i < 6; i++)
+	uint8_t noOfBytes2Read = 6;
+	uint8_t* rawData = new uint8_t[noOfBytes2Read];
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
 	{
 		rawData[i] = 0;
 	}
 
-	uint8_t noOfBytes2Read = 6;
+	
 	readBytes(MPU9250_ADDRESS, GYRO_XOUT_H, noOfBytes2Read, &rawData[0]);
 	
-	bucket2PutDataInto[0] = (uint16_t)(((uint16_t)rawData[0] << 8) | rawData[1]);
-	bucket2PutDataInto[1] = (uint16_t)(((uint16_t)rawData[2] << 8) | rawData[3]);
-	bucket2PutDataInto[2] = (uint16_t)(((uint16_t)rawData[4] << 8) | rawData[5]);
+	bucket2PutDataInto[0] = (uint16_t)(( ((uint16_t)rawData[0]) << 8) | rawData[1]);
+	bucket2PutDataInto[1] = (uint16_t)(( ((uint16_t)rawData[2]) << 8) | rawData[3]);
+	bucket2PutDataInto[2] = (uint16_t)(( ((uint16_t)rawData[4]) << 8) | rawData[5]);
 
 }
 
+
+// This function will read 16-bit register corresponding to the RAW temperature sensor.
+void MPU9250::readTempRawData(uint16_t* bucket2PutDataInto)
+{
+	uint8_t noOfBytes2Read = 2;
+	uint8_t* rawData = new uint8_t[noOfBytes2Read];  // x/y/z gyro register data stored here
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+	{
+		rawData[i] = 0;
+	}
+
+	readBytes(MPU9250_ADDRESS, TEMP_OUT_H, noOfBytes2Read, &rawData[0]);
+
+	bucket2PutDataInto[0] = (uint16_t)( ((uint16_t)rawData[0]) << 8 | rawData[1] );
+}
+
+
+// This function will read three 16-bit registers correspoding to the RAW magnetometer sensor.
+void MPU9250::readMagnetoRawData(uint16_t* bucket2PutDataInto)
+{
+	// Define and initilize an array to store register values.
+	uint8_t noOfBytes2Read = 7;
+	uint8_t* rawData = new uint8_t[noOfBytes2Read];
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+	{
+		rawData[i] = 0;
+	}
+
+	uint8_t ST2_reg = 0;
+	readByte(AK8963_ADDRESS, AK8963_ST1, &ST2_reg); 
+
+	if ( ST2_reg & 0x01 )
+	{
+		readBytes(AK8963_ADDRESS, AK8963_XOUT_L, noOfBytes2Read, &rawData[0]);
+
+		if (!(rawData[6] & 0x08))
+		{
+			bucket2PutDataInto[0] = (int16_t)(((int16_t)rawData[1] << 8) | rawData[0]);  // Turn the MSB and LSB into a signed 16-bit value
+			bucket2PutDataInto[1] = (int16_t)(((int16_t)rawData[3] << 8) | rawData[2]);  // Data stored as little Endian
+			bucket2PutDataInto[2] = (int16_t)(((int16_t)rawData[5] << 8) | rawData[4]);
+		}
+	}
+}
+
+// This function will reset Accelerometer + Gyroscope to their default state
+void MPU9250::resetAcceleroGyro(void)
+{
+	uint8_t setState = (uint8_t)0x80;
+	writeByte(MPU9250_ADDRESS, PWR_MGMT_1, setState);
+	delayMS(100);
+}
+
+
+// This function will initiate the Magnetometer Sensor
+void MPU9250::initMagneto(void)
+{
+	// First extract the factory calibration for each magnetometer axis
+	uint8_t noOfBytes2Read = 3;
+	uint8_t* rawData = new uint8_t[noOfBytes2Read];
+	for (uint8_t i = 0; i < noOfBytes2Read; i++)
+	{
+		rawData[i] = 0;
+	}
+
+	uint8_t setState = (uint8_t)0x00;
+
+	setState = (uint8_t)0x00; // Power down magnetometer  
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
+	delayMS(10);
+
+	setState = (uint8_t) 0x0F; // Enter Fuse ROM access mode
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); 
+	delayMS(10);
+
+	readBytes(AK8963_ADDRESS, AK8963_ASAX, noOfBytes2Read, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
+
+	//destination[0] = (float)(rawData[0] - 128) / 256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
+	//destination[1] = (float)(rawData[1] - 128) / 256.0f + 1.0f;
+	//destination[2] = (float)(rawData[2] - 128) / 256.0f + 1.0f;
+	
+	setState = (uint8_t)0x00; // Power down magnetometer  
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState);
+	delayMS(10);
+
+	// Configure the magnetometer for continuous read and highest resolution
+	// set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
+	// and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
+	uint8_t Mscale = 1;
+	uint8_t Mmode = 0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR 
+	setState = (Mscale << 4) | Mmode;
+	writeByte(AK8963_ADDRESS, AK8963_CNTL, setState); // Set magnetometer data resolution and sample ODR
+	delayMS(10);
+}
 
 // This function will get current time in micro seconds.
 unsigned long MPU9250::micros()

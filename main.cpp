@@ -2,35 +2,63 @@
 
 int main()
 {
-	uint16_t *data = new uint16_t[3];
-	data[0] = 0;
-	data[1] = 0;
-	data[2] = 0;
+	uint16_t *accel_data = new uint16_t[3];
+	accel_data[0] = 0;
+	accel_data[1] = 0;
+	accel_data[2] = 0;
+
+	uint16_t *gyro_data = new uint16_t[3];
+	gyro_data[0] = 0;
+	gyro_data[1] = 0;
+	gyro_data[2] = 0;
+
+	uint16_t *temp_data = new uint16_t[1];
+	temp_data[0] = 0;
+
+	uint16_t *magneto_data = new uint16_t[3];
+	magneto_data[0] = 0;
+	magneto_data[1] = 0;
+	magneto_data[2] = 0;
 	
 	MPU9250 mpu9250;
 	
 	std::cout<<"config mpu2950 ";
-	
 	mpu9250.initAcceleroGyro();
-	
+	std::cout<<"done!"<<std::endl;
+	std::cout<<std::endl;
+
+	std::cout<<"config AK8963 ";
+	mpu9250.initMagneto();
 	std::cout<<"done!"<<std::endl;
 	
 	while(1)
 	{
-		mpu9250.readAcceleroRawData(data);
+		mpu9250.readAcceleroRawData(accel_data);
 
 		for(int i=0; i<3; i++)
 		{
-			std::cout<< i << ": " << 1.0f*data[i] << std::endl;
+			std::cout<< i << ": " << 1.0f*accel_data[i] << std::endl;
 		}
 		std::cout<<std::endl;
 
-		mpu9250.readGyroRawData(data);
+		mpu9250.readGyroRawData(gyro_data);
 
 		for(int i=0; i<3; i++)
 		{
-			std::cout<< i << ": " << 1.0f*data[i] << std::endl;
+			std::cout<< i << ": " << 1.0f*gyro_data[i] << std::endl;
 		}
+
+		mpu9250.readTempRawData(temp_data);
+
+		std::cout<< "T" << ": " << temp_data << std::endl;
+		
+		mpu9250.readMagnetoRawData(magneto_data);
+
+		for(int i=0; i<3; i++)
+		{
+			std::cout<< i << ": " << 1.0f*magneto_data[i] << std::endl;
+		}
+
 		std::cout<<std::endl;
 		std::cout<<std::endl;
 		std::cout<<std::endl;
