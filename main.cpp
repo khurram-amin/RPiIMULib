@@ -2,7 +2,7 @@
 
 int main()
 {
-	short *accel_data = new short[3];
+	uint16_t *accel_data = new uint16_t[3];
 	// accel_data[0] = 0;
 	// accel_data[1] = 0;
 	// accel_data[2] = 0;
@@ -15,7 +15,7 @@ int main()
 	short *temp_data = new short[1];
 	// temp_data[0] = 0;
 
-	short *magneto_data = new short[3];
+	uint16_t *magneto_data = new uint16_t[3];
 	// magneto_data[0] = 0;
 	// magneto_data[1] = 0;
 	// magneto_data[2] = 0;
