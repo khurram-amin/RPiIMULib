@@ -3,22 +3,22 @@
 int main()
 {
 	short *accel_data = new short[3];
-	accel_data[0] = 0;
-	accel_data[1] = 0;
-	accel_data[2] = 0;
+	// accel_data[0] = 0;
+	// accel_data[1] = 0;
+	// accel_data[2] = 0;
 
 	short *gyro_data = new short[3];
-	gyro_data[0] = 0;
-	gyro_data[1] = 0;
-	gyro_data[2] = 0;
+	// gyro_data[0] = 0;
+	// gyro_data[1] = 0;
+	// gyro_data[2] = 0;
 
 	short *temp_data = new short[1];
-	temp_data[0] = 0;
+	// temp_data[0] = 0;
 
 	short *magneto_data = new short[3];
-	magneto_data[0] = 0;
-	magneto_data[1] = 0;
-	magneto_data[2] = 0;
+	// magneto_data[0] = 0;
+	// magneto_data[1] = 0;
+	// magneto_data[2] = 0;
 	
 	MPU9250 mpu9250;
 	
