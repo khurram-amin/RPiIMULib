@@ -30,8 +30,8 @@
 #include <iostream>
 
 // For I2C communication in RPi
-#include "wiringPiI2C.h"
-#include "wiringPi.h"
+#include <wiringPiI2C.h>
+#include <wiringPi.h>
 
 // To throw exceptions
 #include <exception>

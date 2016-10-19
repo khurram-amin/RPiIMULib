@@ -1,5 +1,5 @@
 #include "MPU9250.h"
-#include "wiringPi.h"
+#include <wiringPi.h>
 
 int main()
 {
@@ -16,7 +16,7 @@ int main()
 	short *temp_data = new short[1];
 	// temp_data[0] = 0;
 
-	uint16_t *magneto_data = new uint16_t[3];
+	short *magneto_data = new short[3];
 	// magneto_data[0] = 0;
 	// magneto_data[1] = 0;
 	// magneto_data[2] = 0;
