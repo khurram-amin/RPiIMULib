@@ -1,4 +1,5 @@
 #include "MPU9250.h"
+#include "wiringPi.h"
 
 int main()
 {

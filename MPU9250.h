@@ -44,7 +44,7 @@
 
 // To get exact-width (unit*_t) datatypes
 //#include <stdint.h>
-using namespace std;
+//using namespace std;
 #define uint8_t unsigned char
 #define int8_t char
 #define uint16_t unsigned short
