@@ -26,9 +26,6 @@
 // Include the Register Map Definitions 
 #include "MPU9250RegMap.h"
 
-// To get exact-width (unit*_t) datatypes
-#include <stdint.h>
-
 // To output stuff on screen
 #include <iostream>
 
@@ -44,6 +41,16 @@
 #include <sys/time.h>
 // Unix Sleep function
 #include <unistd.h>
+
+// To get exact-width (unit*_t) datatypes
+//#include <stdint.h>
+using namespace std;
+#define uint8_t unsigned char
+#define int8_t char
+#define uint16_t unsigned short
+#define int16_t short
+#define uint32_t unsigned long
+#define int32_t long
 
 
 #define DEBUG_MODE 0 //AKA Show me everything
