@@ -23,8 +23,6 @@
 #ifndef MPU9250_H
 #define MPU9250_H
 
-// Include the Register Map Definitions 
-#include "MPU9250RegMap.h"
 
 // To output stuff on screen
 #include <iostream>
@@ -32,6 +30,9 @@
 // For I2C communication in RPi
 #include <wiringPiI2C.h>
 #include <wiringPi.h>
+
+// Include the Register Map Definitions 
+#include "MPU9250RegMap.h"
 
 // To throw exceptions
 #include <exception>
